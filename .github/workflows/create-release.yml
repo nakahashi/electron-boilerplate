@@ -41,7 +41,7 @@ jobs:
           echo "release_name=$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
 
       - name: Generate release notes
-        use: octokit/request-action@v2.x
+        uses: octokit/request-action@v2.x
         id: get_release_notes
         with:
           routes: POST /repos/{owner}/{repo}/releases/generate-notes
@@ -50,8 +50,11 @@ jobs:
           tag_name: ${{ env.latest_tag }}
           target_commitishstring: main
           previous_tag_namestring: ${{ env.latest_release_tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - run: |
-        echo "${{ steps.get_release_notes.outputs.data }}"
+          echo "${{ steps.get_release_notes.outputs.data }}"
 
       # - name: Create release
       #   if: env.latest_release_tag != env.latest_tag
