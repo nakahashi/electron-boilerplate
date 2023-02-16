@@ -38,7 +38,7 @@ jobs:
         env:
           TZ: 'Asia/Tokyo'
         run: |
-          echo "release_name=${{'v'}}${{$(date +'%Y%m%d-%H%M')}}" >> $GITHUB_ENV
+          echo "release_name=${{'v'}}${{date +'%Y%m%d-%H%M'}}" >> $GITHUB_ENV
 
       - name: Create release
         # if: env.latest_release != env.latest_tag
