@@ -7,6 +7,8 @@ on:
 jobs:
   create-releases:
     runs-on: ubuntu-latest
+    outputs:
+      latest_release: ${{ steps.latest_release.outputs.data}}
     steps:
       - uses: actions/checkout@v3
 
@@ -19,7 +21,11 @@ jobs:
           repo: electron-boilerplate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: cat ${{ steps.get_latest_release.outputs.data }} | jq -r .tag_name
+      - name: Output latest release
+        id: latest_release
+        run: |
+          data=${{ steps.get_latest_release.outputs.data }}
+          echo "latest_release=$(data | jq -r .tag_name)" >> "$GETHUB_OUTPUT"
 
       - name: Get latest tag
         id: get_latest_tag
