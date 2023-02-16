@@ -19,11 +19,11 @@ jobs:
           repo: electron-boilerplate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: "echo Release found: '${{ steps.get_latest_release.outputs.data }} | jq -r .tag_name'"
+      - run: "echo Release found: '${{ steps.get_latest_release.outputs.data }}' | jq -r .tag_name"
 
       - name: Get latest tag
         id: get_latest_tag
         run: |
           git fetch --prune --unshallow
-          git describe --tags --abbrev=0
+          echo "data=$(git describe --tags --abbrev=0)" >> "$GETHUB_OUTPUT"
       - run: "echo Release found: '${{ steps.get_latest_tag.outputs.data }}'"
