@@ -27,9 +27,17 @@ jobs:
       - run: |
           echo "${{ env.latest_release }}"
 
-      - name: Get latest tag
+      - name: Set latest tag
         run: |
           git fetch --prune --unshallow
-          echo "get_latest_tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_ENV"
+          echo "latest_tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_ENV"
       - run: |
-          echo "${{ env.get_latest_tag }}"
+          echo "${{ env.latest_tag }}"
+
+      - name: Create release
+        if: env.latest_release != env.latest_tag
+        run: echo "create!!"
+
+      - name: Keep release
+        if: env.latest_release == env.latest_tag
+        run: echo "keep!!"
