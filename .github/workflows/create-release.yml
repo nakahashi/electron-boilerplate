@@ -10,8 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Get latest release
-        uses: octokit/request-action@v2.x
+      # - name: Get latest release
+      - uses: octokit/request-action@v2.x
         id: get_latest_release
         with:
           route: GET /repos/{owner}/{repo}/releases/latest
