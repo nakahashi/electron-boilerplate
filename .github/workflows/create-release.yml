@@ -10,9 +10,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Fetch latest release version
-        id: fetch-latest-release
-        uses: reloc8/action-latest-release-version@1.0.0
+      - name: Get latest release
+        uses: octokit/request-action@v2.x
+        id: get_latest_release
+        with:
+          route: GET /repos/{owner}/{repo}/releases/latest
+          owner: nakahashi
+          repo: electron-boilerplate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: "echo Release found: '${{ steps.get_latest_release.outputs.data }} | jq -r .tag_name'"
 
-      - name: Test
-        run: echo ${{ steps.fetch-latest-release.outputs.latest-release }}
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          git fetch --prune --unshallow
+          git describe --tags --abbrev=0
+      - run: "echo Release found: '${{ steps.get_latest_tag.outputs.data }}'"
