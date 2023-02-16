@@ -21,7 +21,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set latest release
         run: |
-          echo "latest_release=$(echo '${{ toJSON(steps.get_latest_release.outputs.data) }}' | jq -r .tag_name" >> $GITHUB_ENV
+          echo "latest_release=$(echo '${{ toJSON(steps.get_latest_release.outputs.data) }}' | jq .tag_name" >> $GITHUB_ENV
 
       - name: Get latest tag
         run: |
