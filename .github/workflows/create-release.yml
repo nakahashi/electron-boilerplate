@@ -44,7 +44,7 @@ jobs:
         uses: octokit/request-action@v2.x
         id: get_release_notes
         with:
-          routes: POST /repos/{owner}/{repo}/releases/generate-notes
+          route: POST /repos/{owner}/{repo}/releases/generate-notes
           owner: nakahashi
           repo: electron-boilerplate
           tag_name: ${{ env.latest_tag }}
