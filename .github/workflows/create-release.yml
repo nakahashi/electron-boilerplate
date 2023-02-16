@@ -54,7 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          echo "${{ steps.get_release_notes.outputs.data }}"
+          "echo found: '${{ steps.get_release_notes.outputs.data }}'"
 
       # - name: Create release
       #   if: env.latest_release_tag != env.latest_tag
