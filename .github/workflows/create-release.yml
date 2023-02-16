@@ -4,6 +4,7 @@ on:
   # push:
   #   branches: [ main ]
           # echo "latest_release=$(echo '${{ toJSON(steps.get_latest_release.outputs.data) }}' | jq .tag_name" >> $GITHUB_ENV
+          # release=$(echo ${{ steps.get_latest_release.outputs.data }} | jq .tag_name)
 
 jobs:
   create-releases:
@@ -22,8 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set latest release
         run: |
-          release=$(echo ${{ steps.get_latest_release.outputs.data }} | jq .tag_name)
-          echo "latest_release=$release" >> "$GITHUB_ENV"
+          echo "latest_release=${{ fromJson(steps.get_latest_release.outputs.data).tag_name }}" >> "$GITHUB_ENV"
       - run: |
           echo "${{ env.latest_release }}"
 
