@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
   # push:
   #   branches: [ main ]
+          # echo "latest_release=$(echo '${{ toJSON(steps.get_latest_release.outputs.data) }}' | jq .tag_name" >> $GITHUB_ENV
 
 jobs:
   create-releases:
@@ -21,7 +22,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set latest release
         run: |
-          echo "latest_release=$(echo '${{ toJSON(steps.get_latest_release.outputs.data) }}' | jq .tag_name" >> $GITHUB_ENV
+          release=$(cat ${{ steps.get_latest_release.outputs.data }} | jq .tag_name
+          echo "latest_release=$release" >> "$GITHUB_ENV"
+      - run: |
+          echo "${{ env.latest_release }}"
 
       - name: Get latest tag
         run: |
