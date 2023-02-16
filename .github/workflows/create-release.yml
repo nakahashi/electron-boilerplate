@@ -34,10 +34,19 @@ jobs:
       - run: |
           echo "${{ env.latest_tag }}"
 
-      - name: Create release
-        if: env.latest_release != env.latest_tag
-        run: echo "create!!"
+      - name: Set release name
+        env:
+          TZ: 'Asia/Tokyo'
+        run: |
+          echo "release_name=${{'v'}}${{$(date +'%Y%m%d-%H%M')}}" >> $GITHUB_ENV
 
-      - name: Keep release
-        if: env.latest_release == env.latest_tag
-        run: echo "keep!!"
+      - name: Create release
+        # if: env.latest_release != env.latest_tag
+        # uses: actions/create-release@v1
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # with:
+        #   tag_name: ${{ env.latest_tag }}
+        #   release_name: ${{ env.release_name }}
+        run: |
+          echo "${{ env.release_name }}"
