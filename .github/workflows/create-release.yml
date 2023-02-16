@@ -48,7 +48,7 @@ jobs:
           owner: nakahashi
           repo: electron-boilerplate
           tag_name: ${{ env.latest_tag }}
-          target_commitishstring: main
+          target_commitish: main
           previous_tag_name: ${{ env.latest_release_tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
