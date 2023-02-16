@@ -23,9 +23,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set latest release
         run: |
-          echo "latest_release=${{ fromJson(steps.get_latest_release.outputs.data).tag_name }}" >> "$GITHUB_ENV"
+          echo "latest_release_tag=${{ fromJson(steps.get_latest_release.outputs.data).tag_name }}" >> "$GITHUB_ENV"
       - run: |
-          echo "${{ env.latest_release }}"
+          echo "${{ env.latest_release_tag }}"
 
       - name: Set latest tag
         run: |
@@ -38,16 +38,27 @@ jobs:
         env:
           TZ: 'Asia/Tokyo'
         run: |
-          datetime_name=$(date +'%Y%m%d-%H%M')
-          echo "release_name=${{'v'}}${{$datetime_name}} >> $GITHUB_ENV
+          echo "release_name=$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
 
-      - name: Create release
-        # if: env.latest_release != env.latest_tag
-        # uses: actions/create-release@v1
-        # env:
-        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # with:
-        #   tag_name: ${{ env.latest_tag }}
-        #   release_name: ${{ env.release_name }}
-        run: |
-          echo "${{ env.release_name }}"
+      - name: Generate release notes
+        use: octokit/request-action@v2.x
+        id: get_release_notes
+        with:
+          routes: POST /repos/{owner}/{repo}/releases/generate-notes
+          owner: nakahashi
+          repo: electron-boilerplate
+          tag_name: ${{ env.latest_tag }}
+          target_commitishstring: main
+          previous_tag_namestring: ${{ env.latest_release_tag }}
+      - run: |
+        echo "${{ steps.get_release_notes.outputs.data }}"
+
+      # - name: Create release
+      #   if: env.latest_release_tag != env.latest_tag
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ env.latest_tag }}
+      #     release_name: "${{'v'}}${{ env.release_name }}"
+      #     body: |
