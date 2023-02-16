@@ -54,13 +54,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: "echo Release found: '${{ steps.get_release_notes.outputs.data }}'"
-
-      # - name: Create release
-      #   if: env.latest_release_tag != env.latest_tag
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ env.latest_tag }}
-      #     release_name: "${{'v'}}${{ env.release_name }}"
-      #     body: |
