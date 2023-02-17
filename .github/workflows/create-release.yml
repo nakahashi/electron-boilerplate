@@ -3,8 +3,6 @@ on:
   workflow_dispatch:
   # push:
   #   branches: [ main ]
-          # echo "latest_release=$(echo '${{ toJSON(steps.get_latest_release.outputs.data) }}' | jq .tag_name" >> $GITHUB_ENV
-          # release=$(echo ${{ steps.get_latest_release.outputs.data }} | jq .tag_name)
 
 jobs:
   create-releases:
@@ -14,13 +12,13 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Get latest release
-        uses: octokit/request-action@v2.x
         id: get_latest_release
+        uses: octokit/request-action@v2.x
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           route: GET /repos/{repo}/releases/latest
           repo: ${{ github.repository }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set latest release
         run: |
           echo "latest_release_tag=${{ fromJson(steps.get_latest_release.outputs.data).tag_name }}" >> "$GITHUB_ENV"
@@ -30,22 +28,34 @@ jobs:
           git fetch --prune --unshallow
           echo "latest_tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_ENV"
 
-      - name: Set release name
+      - name: Set release datetime
         env:
           TZ: 'Asia/Tokyo'
         run: |
-          echo "release_name=$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
+          echo "release_datetime=$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
 
       - name: Generate release notes
-        uses: octokit/request-action@v2.x
         id: get_release_notes
+        uses: octokit/request-action@v2.x
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           route: POST /repos/{repo}/releases/generate-notes
           repo: ${{ github.repository }}
           tag_name: ${{ env.latest_tag }}
           target_commitish: 'main'
           previous_tag_name: ${{ env.latest_release_tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           echo "${{ fromJson(steps.get_release_notes.outputs.data).body }}"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.latest_tag }}
+          release_name: ${{'v'}}${{ env.release_datetime }}
+          body: ${{ fromJson(steps.get_release_notes.outputs.data).body }}
+          draft: false
+          prerelease: false
