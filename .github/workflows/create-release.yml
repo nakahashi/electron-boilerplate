@@ -17,7 +17,6 @@ jobs:
         id: get_latest_release
         with:
           route: GET /repos/{repo}/releases/latest
-          owner: nakahashi
           repo: ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,9 +39,8 @@ jobs:
         uses: octokit/request-action@v2.x
         id: get_release_notes
         with:
-          route: POST /repos/{owner}/{repo}/releases/generate-notes
-          owner: nakahashi
-          repo: electron-boilerplate
+          route: POST /repos/{repo}/releases/generate-notes
+          repo: ${{ github.repository }}
           tag_name: ${{ env.latest_tag }}
           target_commitish: 'main'
           previous_tag_name: ${{ env.latest_release_tag }}
