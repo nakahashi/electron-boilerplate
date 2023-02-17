@@ -1,8 +1,7 @@
 name: create-release
 on:
-  workflow_dispatch:
-  # push:
-  #   branches: [ main ]
+  push:
+    branches: [ ${{ github.event.repository.default_branch }} ]
 
 jobs:
   create-releases:
@@ -45,11 +44,9 @@ jobs:
           tag_name: ${{ env.latest_tag }}
           target_commitish: 'main'
           previous_tag_name: ${{ env.latest_release_tag }}
-      - run: |
-          echo "${{ fromJson(steps.get_release_notes.outputs.data).body }}"
 
       - name: Create Release
-        # if: env.latest_release_tag != env.latest_tag
+        if: env.latest_release_tag != env.latest_tag
         id: create_release
         uses: actions/create-release@v1
         env:
