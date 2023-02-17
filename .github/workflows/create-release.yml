@@ -49,6 +49,7 @@ jobs:
           echo "${{ fromJson(steps.get_release_notes.outputs.data).body }}"
 
       - name: Create Release
+        # if: env.latest_release_tag != env.latest_tag
         id: create_release
         uses: actions/create-release@v1
         env:
