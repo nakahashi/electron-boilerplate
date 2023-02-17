@@ -28,7 +28,7 @@ jobs:
           git fetch --prune --unshallow
           echo "latest_tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_ENV"
 
-      - name: Set release datetime
+      - name: Set release tag
         env:
           TZ: 'Asia/Tokyo'
         run: |
@@ -43,9 +43,11 @@ jobs:
         with:
           route: POST /repos/{repo}/releases/generate-notes
           repo: ${{ github.repository }}
-          tag_name: ${{ env.latest_tag }}
+          tag_name: ${{ env.release_tag }}
           target_commitish: main
           previous_tag_name: ${{ env.latest_release_tag }}
+      - run: |
+          echo ${{ fromJson(steps.get_release_notes.outputs.data).body }}
 
       # - name: Create Release
       #   if: env.latest_release_tag != env.latest_tag
