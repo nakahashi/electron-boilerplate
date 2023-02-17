@@ -16,5 +16,3 @@ npm start
 ```
 npm run test
 ```
-
-hoge
