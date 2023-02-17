@@ -49,15 +49,15 @@ jobs:
       - run: |
           echo ${{ fromJson(steps.get_release_notes.outputs.data).body }}
 
-      # - name: Create Release
-      #   if: env.latest_release_tag != env.latest_tag
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ env.latest_tag }}
-      #     release_name: ${{'v'}}${{ env.release_datetime }}
-      #     body: ${{ fromJson(steps.get_release_notes.outputs.data).body }}
-      #     draft: false
-      #     prerelease: false
+      - name: Create Release
+        if: env.latest_release_tag != env.latest_tag
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.release_tag }}
+          release_name: ${{ env.release_tag }}
+          body: ${{ fromJson(steps.get_release_notes.outputs.data).body }}
+          draft: false
+          prerelease: false
