@@ -1,8 +1,7 @@
 name: create-release
 on:
   push:
-    branches:
-      - ${{ github.event.repository.default_branch }}
+    branches: [ main ]
 
 jobs:
   create-releases:
@@ -43,7 +42,7 @@ jobs:
           route: POST /repos/{repo}/releases/generate-notes
           repo: ${{ github.repository }}
           tag_name: ${{ env.latest_tag }}
-          target_commitish: ${{ github.event.repository.default_branch }}
+          target_commitish: main
           previous_tag_name: ${{ env.latest_release_tag }}
 
       - name: Create Release
