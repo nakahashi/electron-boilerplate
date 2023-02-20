@@ -2,7 +2,9 @@ name: create-release
 on:
   push:
     branches: [ main ]
-  # workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   create-releases:
@@ -28,12 +30,12 @@ jobs:
           git fetch --prune --unshallow
           echo "latest_tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_ENV"
 
-      - name: Set release tag
+      - name: Set new release tag
         env:
           TZ: 'Asia/Tokyo'
         run: |
           release_datetime=$(date +'%Y%m%d-%H%M')
-          echo "release_tag=v$release_datetime" >> $GITHUB_ENV
+          echo "new_release_tag=v$release_datetime" >> $GITHUB_ENV
 
       - name: Generate release notes
         id: get_release_notes
@@ -43,7 +45,7 @@ jobs:
         with:
           route: POST /repos/{repo}/releases/generate-notes
           repo: ${{ github.repository }}
-          tag_name: ${{ env.release_tag }}
+          tag_name: ${{ env.new_release_tag }}
           target_commitish: main
           previous_tag_name: ${{ env.latest_release_tag }}
 
@@ -54,8 +56,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.release_tag }}
-          release_name: ${{ env.release_tag }}
+          tag_name: ${{ env.new_release_tag }}
+          release_name: ${{ env.new_release_tag }}
           body: ${{ fromJson(steps.get_release_notes.outputs.data).body }}
           draft: false
           prerelease: false
