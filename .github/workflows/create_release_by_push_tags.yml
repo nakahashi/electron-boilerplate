@@ -1,0 +1,33 @@
+name: create-release
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set new release tag
+        env:
+          TZ: 'Asia/Tokyo'
+        run: |
+          release_datetime=$(date +'%Y%m%d-%H%M')
+          echo "new_release_tag=v$release_datetime" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: octokit/request-action@v2.x
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          route: POST /repos/{repo}/releases
+          repo: ${{ github.repository }}
+          tag_name: ${GITHUB_REF##*/}
+          target_commitish: main
+          name: ${{ env.new_release_tag }}
+          generate_release_notes: true
+          draft: false
+          prerelease: false
